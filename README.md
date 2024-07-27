@@ -1,20 +1,24 @@
 # ThinkDSP
 
-LaTeX source and Python code for _Think DSP: Digital Signal Processing in Python_, by Allen B. Downey.
+*Think DSP* is an introduction to Digital Signal Processing in Python.
 
-The premise of this book (and the other books in the _Think X_ series) is that if you know how to program,
-you can use that skill to learn other things.  I am writing this book because I think the conventional
-approach to digital signal processing is backward: most books (and the classes that use them) present
-the material bottom-up, starting with mathematical abstractions like phasors.
+[Order *Think DSP* from Amazon.com](http://amzn.to/1naaUCN).
 
-With a programming-based approach, I can go top-down, which means I can present the most important
-ideas right away.  By the end of the first chapter, you can break down a sound into its harmonics, modify the harmonics, and generate new sounds.
+[Download *Think DSP* in PDF](http://greenteapress.com/thinkdsp/thinkdsp.pdf).
+
+[Read *Think DSP* in HTML](http://greenteapress.com/thinkdsp/html/index.html).
+
+The premise of this book (and the other books in the Think X series) is that if you know how to program, you can use that skill to learn other things. I am writing this book because I think the conventional approach to digital signal processing is backward: most books (and the classes that use them) present the material bottom-up, starting with mathematical abstractions like phasors.
+
+With a programming-based approach, I can go top-down, which means I can present the most important ideas right away. By the end of the first chapter, you can decompose a sound into its harmonics, modify the harmonics, and generate new sounds.
+
+Think DSP is a Free Book. It is available under the [Creative Commons Attribution-NonCommercial 3.0 Unported License](https://creativecommons.org/licenses/by-nc/3.0/), which means that you are free to copy, distribute, and modify it, as long as you attribute the work and don't use it for commercial purposes.
 
 Here's a notebook that previews what you will see in Chapter 1:
 
 * [chap01preview.ipynb](https://colab.research.google.com/github/AllenDowney/ThinkDSP/blob/master/code/chap01preview.ipynb)
 
-And if you want to see where were headed, here's a preview of Chapter 10:
+And if you want to see where we are headed, here's a preview of Chapter 10:
 
 * [chap10preview.ipynb](https://colab.research.google.com/github/AllenDowney/ThinkDSP/blob/master/code/chap10preview.ipynb)
 
@@ -157,7 +161,7 @@ If not, the Jupyter server should print a URL you can use.  For example, when I 
 
 In this case, the URL is [http://localhost:8888](http://localhost:8888).
 When you start your server, you might get a different URL.
-Whatever it is, if you paste it into a browser, you should should see a home page with a list of directories.
+Whatever it is, if you paste it into a browser, you should see a home page with a list of directories.
 
 Click on `code` to open the folder with the notebooks, then click on one of the notebooks (with the .ipynb extension).
 

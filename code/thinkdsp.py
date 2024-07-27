@@ -16,7 +16,6 @@ import scipy.fftpack
 import subprocess
 import warnings
 
-from fractions import gcd
 from wave import open as open_wave
 from scipy.io import wavfile
 
@@ -24,7 +23,7 @@ import matplotlib.pyplot as plt
 
 try:
     from IPython.display import Audio
-except:
+except ImportError:
     warnings.warn(
         "Can't import Audio from IPython.display; " "Wave.make_audio() will not work."
     )
@@ -168,8 +167,7 @@ def find_index(x, xs):
 
 
 class _SpectrumParent:
-    """Contains code common to Spectrum and DCT.
-    """
+    """Contains code common to Spectrum and DCT."""
 
     def __init__(self, hs, fs, framerate, full=False):
         """Initializes a spectrum.
@@ -197,7 +195,7 @@ class _SpectrumParent:
     @property
     def power(self):
         """Returns a sequence of powers (read-only property)."""
-        return self.amps ** 2
+        return self.amps**2
 
     def copy(self):
         """Makes a copy.
@@ -281,7 +279,7 @@ class _SpectrumParent:
         """
         if self.full:
             fs, amps = self.render_full(high)
-            plt.plot(fs, amps ** 2, **options)
+            plt.plot(fs, amps**2, **options)
         else:
             i = None if high is None else find_index(high, self.fs)
             plt.plot(self.fs[:i], self.power[:i], **options)
@@ -433,14 +431,13 @@ class Spectrum(_SpectrumParent):
         returns: new Spectrum
         """
         new = self.copy()
-        zero = (new.fs == 0)
+        zero = new.fs == 0
         new.hs[~zero] /= PI2 * 1j * new.fs[~zero]
         new.hs[zero] = np.inf
         return new
 
     def make_integrated_spectrum(self):
-        """Makes an integrated spectrum.
-        """
+        """Makes an integrated spectrum."""
         cs = np.cumsum(self.power)
         cs /= cs[-1]
         return IntegratedSpectrum(cs, self.fs)
@@ -597,18 +594,18 @@ class Spectrogram:
 
         # make the array
         size = len(fs), len(ts)
-        array = np.zeros(size, dtype=np.float)
+        array = np.zeros(size, dtype=float)
 
         # copy amplitude from each spectrum into a column of the array
         for j, t in enumerate(ts):
             spectrum = self.spec_map[t]
             array[:, j] = spectrum.amps[:i]
 
-        underride(options, cmap='inferno_r')
-        plt.pcolor(ts, fs, array, **options)
-        
+        underride(options, cmap="inferno_r", shading="auto")
+        plt.pcolormesh(ts, fs, array, **options)
+
     def get_data(self, high=None, **options):
-        """Returns spectogram as 2D numpy array 
+        """Returns spectogram as 2D numpy array
 
         high: highest frequency component to return
         """
@@ -619,7 +616,7 @@ class Spectrogram:
 
         # make the array
         size = len(fs), len(ts)
-        array = np.zeros(size, dtype=np.float)
+        array = np.zeros(size, dtype=float)
 
         # copy amplitude from each spectrum into a column of the array
         for j, t in enumerate(ts):
@@ -627,7 +624,7 @@ class Spectrogram:
             array[:, j] = spectrum.amps[:i]
 
         return array
-    
+
     def make_wave(self):
         """Inverts the spectrogram and returns a Wave.
 
@@ -650,7 +647,7 @@ class Spectrogram:
         low = min(starts)
         high = max(ends)
 
-        ys = np.zeros(high - low, np.float)
+        ys = np.zeros(high - low, dtype=float)
         for start, end, wave in res:
             ys[start:end] = wave.ys
 
@@ -659,9 +656,7 @@ class Spectrogram:
 
 
 class Wave:
-    """Represents a discrete-time waveform.
-
-    """
+    """Represents a discrete-time waveform."""
 
     def __init__(self, ys, ts=None, framerate=None):
         """Initializes the wave.
@@ -848,8 +843,7 @@ class Wave:
         self.ys = apodize(self.ys, self.framerate, denom, duration)
 
     def hamming(self):
-        """Apply a Hamming window to the wave.
-        """
+        """Apply a Hamming window to the wave."""
         self.ys *= np.hamming(len(self.ys))
 
     def window(self, window):
@@ -875,8 +869,7 @@ class Wave:
         self.ts += shift
 
     def roll(self, roll):
-        """Rolls this wave by the given number of locations.
-        """
+        """Rolls this wave by the given number of locations."""
         self.ys = np.roll(self.ys, roll)
 
     def truncate(self, n):
@@ -903,8 +896,7 @@ class Wave:
         self.ys = normalize(self.ys, amp=amp)
 
     def unbias(self):
-        """Unbiases the signal.
-        """
+        """Unbiases the signal."""
         self.ys = unbias(self.ys)
 
     def find_index(self, t):
@@ -963,8 +955,7 @@ class Wave:
         return Spectrum(hs, fs, self.framerate, full)
 
     def make_dct(self):
-        """Computes the DCT of this wave.
-        """
+        """Computes the DCT of this wave."""
         N = len(self.ys)
         hs = scipy.fftpack.dct(self.ys, type=2)
         fs = (0.5 + np.arange(N)) / 2
@@ -1018,9 +1009,7 @@ class Wave:
         plt.plot(self.ts * xfactor, np.real(self.ys), **options)
 
     def plot_vlines(self, **options):
-        """Plots the wave with vertical lines for samples.
-
-        """
+        """Plots the wave with vertical lines for samples."""
         xfactor = self.get_xfactor(options)
         plt.vlines(self.ts * xfactor, 0, self.ys, **options)
 
@@ -1098,8 +1087,7 @@ class Wave:
         play_wave(filename)
 
     def make_audio(self):
-        """Makes an IPython Audio object.
-        """
+        """Makes an IPython Audio object."""
         audio = Audio(data=self.ys.real, rate=self.framerate)
         return audio
 
@@ -1481,7 +1469,7 @@ class GlottalSignal(Sinusoid):
         ts = np.asarray(ts)
         cycles = self.freq * ts + self.offset / PI2
         frac, _ = np.modf(cycles)
-        ys = frac ** 2 * (1 - frac)
+        ys = frac**2 * (1 - frac)
         ys = normalize(unbias(ys), self.amp)
         return ys
 
@@ -1503,7 +1491,6 @@ class TriangleSignal(Sinusoid):
         ys = normalize(unbias(ys), self.amp)
         return ys
 
-from scipy.integrate import cumtrapz
 
 class Chirp(Signal):
     """Represents a signal with variable frequency."""
@@ -1538,6 +1525,7 @@ class Chirp(Signal):
 
         returns: float wave array
         """
+
         def interpolate(ts, f0, f1):
             t0, t1 = ts[0], ts[-1]
             return f0 + (f1 - f0) * (ts - t0) / (t1 - t0)
@@ -1766,7 +1754,7 @@ def midi_to_freq(midi_num):
     returns: float frequency in Hz
     """
     x = (midi_num - 69) / 12.0
-    freq = 440.0 * 2 ** x
+    freq = 440.0 * 2**x
     return freq
 
 
@@ -1894,10 +1882,7 @@ def underride(d, **options):
     return d
 
 
-
-
 def main():
-
     cos_basis = cos_wave(440)
     sin_basis = sin_wave(440)
 
@@ -1948,7 +1933,7 @@ def main():
     sig2 = CosSignal(freq=523.25)
     sig3 = CosSignal(freq=660)
     sig4 = CosSignal(freq=880)
-    sig5 = CosSignal(freq=987)
+    # sig5 = CosSignal(freq=987)
     sig = sig1 + sig2 + sig3 + sig4
 
     # wave = Wave(sig, duration=0.02)
